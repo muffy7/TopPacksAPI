@@ -10,7 +10,11 @@ import java.util.*;
 
 public class TopPacksAPI {
 
-	static int isImport = 0;
+	static int isImport = 0; /*
+								 * This variable will check whether we are calling the import function or the
+								 * toppacks function For Import function isImport = 0 and for the toppacks
+								 * isImport = 1
+								 */
 	static OkHttpClient client = new OkHttpClient();
 	static Map<String, Integer> packages = new HashMap<String, Integer>();
 
@@ -92,10 +96,6 @@ public class TopPacksAPI {
 		}
 	}
 
-
-	
-	
-	
 	/*
 	 * This method Import which takes repository Id as an input and then uses it to
 	 * print the packages if package.json file is present
@@ -122,7 +122,7 @@ public class TopPacksAPI {
 		} catch (ParseException e3) {
 			e3.printStackTrace();
 		}
-		JSONObject responseJSON = (JSONObject)responseObject;
+		JSONObject responseJSON = (JSONObject) responseObject;
 		int j;
 		String name = (String) (responseJSON).get("name");
 		System.out.println("Name: " + name);
@@ -153,8 +153,13 @@ public class TopPacksAPI {
 		}
 		RepositoryPackageFinder(RepositoryContentResponse);
 	}
-	
-	public static void RepositoryPackageFinder(String RepositoryContentResponse) throws IOException{
+
+	/*
+	 * This method will search for the package.json file in the repository and if
+	 * present it will further call another method depAndDevDepPackagesRetriever()
+	 * which will retrieve the packages name present inside the package.json file
+	 */
+	public static void RepositoryPackageFinder(String RepositoryContentResponse) throws IOException {
 		BufferedWriter packageWriter = new BufferedWriter(new FileWriter("D:/packages.txt"));
 		Object RepositoryContentResponse_Object = null;
 		JSONParser parser = new JSONParser();
@@ -171,8 +176,9 @@ public class TopPacksAPI {
 			if (((String) ContentArray_JSONObj.get("name")).equals("package.json")) {
 				String downloadUrl = null;
 				try {
-					downloadUrl = run((String) ContentArray_JSONObj.get("download_url"));// This will help us see the contents of
-																			// package.json
+					downloadUrl = run((String) ContentArray_JSONObj.get("download_url"));// This will help us see the
+																							// contents of
+					// package.json
 					if (downloadUrl.equals("")) {
 						System.exit(0);
 					}
@@ -192,7 +198,7 @@ public class TopPacksAPI {
 				}
 				JSONObject dep = (JSONObject) parserObject.get("dependencies");
 				JSONObject devDep = (JSONObject) parserObject.get("devDependencies");
-				depAndDevDepPackagesRetriever (dep, devDep,packageWriter);
+				depAndDevDepPackagesRetriever(dep, devDep, packageWriter);
 				break;
 			}
 
@@ -200,7 +206,12 @@ public class TopPacksAPI {
 		packageWriter.close();
 	}
 
-	public static void depAndDevDepPackagesRetriever(JSONObject dep, JSONObject devDep, BufferedWriter packageWriter) throws IOException {
+	/*
+	 * This method will retrieve the names of the packages present in the
+	 * package.json file in the root folder of the Repository
+	 */
+	public static void depAndDevDepPackagesRetriever(JSONObject dep, JSONObject devDep, BufferedWriter packageWriter)
+			throws IOException {
 		try {
 			for (Object key : dep.keySet()) {
 
@@ -217,7 +228,7 @@ public class TopPacksAPI {
 
 			}
 		} catch (NullPointerException e) {
-			
+
 		}
 		try {
 			for (Object key : devDep.keySet()) {
@@ -238,7 +249,7 @@ public class TopPacksAPI {
 
 		}
 	}
-	
+
 	/*
 	 * This method toppacks will help me print the Top ten packs used in the
 	 * package.json file of the repositories whose repositories_Id's are stored in
@@ -281,7 +292,7 @@ public class TopPacksAPI {
 			System.out.println("Repositories_Id  :-" + repoId);
 			try {
 				packagesReader.seek(0);// For each repository_Id package.txt is updated so we need to go to the
-							// starting of the file and for this I will need this
+				// starting of the file and for this I will need this
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
